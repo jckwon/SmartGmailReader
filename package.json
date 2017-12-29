@@ -1,0 +1,18 @@
+{
+  "name": "demo-tutorial",
+  "dependencies": {
+    "aws-sdk": "^2.58.0",
+    "base64-img": "^1.0.3",
+    "base64image-to-file": "^1.2.0",
+    "base64url": "^2.0.0",
+    "express": "^4.15.2",
+    "fs": "0.0.1-security",
+    "gmail-api-sync": "^1.2.5",
+    "gmail-notifier": "0.0.5",
+    "googleapis": "^19.0.0",
+    "mail-notifier": "^0.3.0",
+    "parse-gmail-email": "^1.0.1",
+    "path": "^0.12.7",
+    "socketio": "^1.0.0"
+  }
+}

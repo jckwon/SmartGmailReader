@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Gmail Reader</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="https://blackrockdigital.github.io/startbootstrap-creative/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="https://blackrockdigital.github.io/startbootstrap-creative/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+
+    <!-- Plugin CSS -->
+    <link href="https://blackrockdigital.github.io/startbootstrap-creative/vendor/magnific-popup/magnific-popup.css" rel="stylesheet">
+
+    <!-- Theme CSS -->
+    <link href="https://blackrockdigital.github.io/startbootstrap-creative/css/creative.min.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+
+</head>
+
+<body id="page-top" ng-app="app" ng-controller="ctrl">
+
+<header>
+    <div class="header-content">
+        <div class="header-content-inner">
+            <h2 id="homeHeading">Computer Networking Project</h2><BR>
+            <h1 id="homeHeading">Gmail Reader</h1>
+            <hr>
+            <p>Web application which reads out to user by voice of a person of the sender and the content when a new e-mail is received to user’s G-mail account. Also, when attached file is an image, it recognizes the content of image and reads the result to the user. </p>
+            <img src="./sign-in-with-google.png" ng-click="login()">
+        </div>
+    </div>
+</header>
+
+<section class="bg-primary" id="about">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 text-center">
+                <h2 class="section-heading">We've got what you need!</h2>
+                <hr class="light">
+                <p class="text-faded">When new mail arrives, it is convenient in knowing the content of the mail for the user, that user do not have to stop doing the other work to check the new mail by connecting to Gmail.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="no-padding" id="portfolio">
+    <div class="container-fluid">
+        <div class="row no-gutter popup-gallery">
+        </div>
+    </div>
+</section>
+
+<section id="contact">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 text-center">
+                <h2 class="section-heading">Let's Get In Touch!</h2>
+                <hr class="primary">
+                <p>Ready to start your next project with us? That's great! Give us a call or send us an email and we will get back to you as soon as possible!</p>
+            </div>
+            <div class="col-lg-4 col-lg-offset-2 text-center">
+                <i class="fa fa-phone fa-3x sr-contact"></i>
+                <p>010-9645-7075</p>
+            </div>
+            <div class="col-lg-4 text-center">
+                <i class="fa fa-envelope-o fa-3x sr-contact"></i>
+                <p><a href="mailto:jckwon@smartx.kr">jckwon@smartx.kr</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- jQuery -->
+<script src="https://blackrockdigital.github.io/startbootstrap-creative/vendor/jquery/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="https://blackrockdigital.github.io/startbootstrap-creative/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+<!-- Plugin JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+<script src="https://blackrockdigital.github.io/startbootstrap-creative/vendor/scrollreveal/scrollreveal.min.js"></script>
+<script src="https://blackrockdigital.github.io/startbootstrap-creative/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+<!-- Theme JavaScript -->
+<script src="https://blackrockdigital.github.io/startbootstrap-creative/js/creative.min.js"></script>
+
+</body>
+<script src="socket.io.js"></script>
+<script>
+
+
+    var socket = io.connect('/');
+    socket.on('announcements', function(data) {
+        console.log('Got announcement:', data.message);
+    });
+
+    var app = angular.module("app", []);
+
+    app.controller("ctrl", function($scope, $http, $window) {
+
+        var url;
+        var windowThatWasOpened;
+
+        $http.get("url").then(function(response) {
+            url = response.data;
+        });
+
+        $scope.login = function() {
+            windowThatWasOpened = $window.open(url, "Please sign in with Google", "width=500px,height:700px");
+        };
+
+        window.onmessage = function(e) {
+            windowThatWasOpened.close();
+            var urlWithCode = e.data;
+
+            var idx = urlWithCode.lastIndexOf("code=");
+            var code = urlWithCode.substring(idx + 5).replace("#","");
+
+            console.log(code);
+
+            $http.get("tokens?code=" + code).then(function(response) {
+                window.location.href = "/mailreader";
+            });
+
+        };
+    });
+
+</script>
+</html>
